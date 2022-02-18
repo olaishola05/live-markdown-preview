@@ -1,0 +1,14 @@
+@import './Components/SCSS/input';
+@import './Components/SCSS/output';
+@import './Components/SCSS/display';
+
+.markdownContainer {
+  width: 80%;
+  display: flex;
+  margin: 0 auto;
+  padding: 20px;
+  gap: 20px;
+  background-color: #fff;
+  box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0;
+  border-radius: 8px;
+}
