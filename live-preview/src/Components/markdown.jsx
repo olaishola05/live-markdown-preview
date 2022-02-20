@@ -1,48 +1,58 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Remarkable } from 'remarkable';
 import Input from './Input';
 import Output from './Output';
 
-export class Markdown extends Component {
-  constructor(props) {
-    super(props);
+function getInitialNotes() {
+  const storedTodos = localStorage.getItem('notes');
+  const savedTodos = JSON.parse(storedTodos);
+  return savedTodos || [];
+}
+const id = () => {
+  Math.random().toString(36).slice(2);
+};
 
-    this.md = new Remarkable();
-    this.handleChange = this.handleChange.bind(this);
-    this.state = JSON.parse(localStorage.getItem('notes'));
-  }
+const Markdown = () => {
+  const [notes, setNotes] = useState(getInitialNotes());
+  const [inputs, setInputs] = useState('"Write your **notes** here"');
 
-  handleTitle = (e) => {
-    this.setState({ title: e.target.value });
+  console.log(id());
+
+  const md = new Remarkable();
+
+  const handleChange = (e) => {
+    setInputs(e.target.value);
   };
 
-  handleChange(e) {
-    this.setState({ note: e.target.value });
-  }
+  const getRawMarkup = () => {
+    return { __html: md.render(inputs) };
+  };
 
-  getRawMarkup() {
-    return { __html: this.md.render(this.state.note) };
-  }
-
-  componentDidMount() {
-    const temp = JSON.stringify(this.state);
+  useEffect(() => {
+    const temp = JSON.stringify(notes);
     localStorage.setItem('notes', temp);
-  }
+  }, [notes]);
 
-  render() {
-    console.log(this.state);
-    return (
-      <div className="markdownContainer">
-        <Input
-          handleChange={this.handleChange}
-          currentValue={this.state.note}
-          handleTitle={this.handleTitle}
-          value="value"
-        />
-        <Output dangerouslySetInnerHTML={this.getRawMarkup()} />
-      </div>
-    );
-  }
-}
+  const addNewNote = (title) => {
+    const newNote = {
+      id: id(),
+      inputs,
+      title,
+    };
+    setNotes({ ...notes, newNote });
+  };
+
+  return (
+    <div className="markdownContainer">
+      <Input
+        handleChange={handleChange}
+        currentValue={inputs}
+        value="notes"
+        addNewNoteProps={addNewNote}
+      />
+      <Output dangerouslySetInnerHTML={getRawMarkup()} />
+    </div>
+  );
+};
 
 export default Markdown;

@@ -1,14 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 export const Input = (props) => {
+  const [inputTitle, setInputTitle] = useState({ title: '' });
+
+  const handleTitle = (e) => {
+    setInputTitle({
+      ...inputTitle,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (inputTitle.title.trim()) {
+      props.addNewNoteProps(inputTitle.title);
+      setInputTitle({ title: '' });
+    } else {
+      return 'A message to display on the ui here';
+    }
+  };
   return (
     <div className="inputscontainer">
-      <form className="form">
+      <form className="form" onSubmit={handleSubmit}>
         <label htmlFor="title">
           <input
             type="text"
             placeholder="Add note title"
-            onChange={props.handleTitle}
+            onChange={handleTitle}
+            value={inputTitle.title}
+            name="title"
           />
         </label>
 
@@ -19,7 +39,7 @@ export const Input = (props) => {
           defaultValue={props.currentValue}
           placeholder={props.currentValue}
         />
-        <button type="button">Save</button>
+        <input type="submit" value="Save" />
       </form>
     </div>
   );
